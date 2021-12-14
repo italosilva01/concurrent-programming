@@ -1,4 +1,5 @@
-# import numpy
+import numpy  as np
+import sys
 
 def createMatrz(file):
     row = 0
@@ -18,35 +19,37 @@ def printMatriz(size,matriz):
         print(matriz[a])  
 
 
-def multMatriz(m,n,p):
-    # In [2]:a =  np.zeros((4,4), dtype=np.float64)
-    A = createMatrz("tra1/entradas/A4x4.txt")
-    B = createMatrz("tra1/entradas/B4x4.txt")
-    row = [0]*4
-    colum = [0]*4;
-    C = [row]*4;
+def multMatriz(size):
+    
+    A = createMatrz("tra1/entradas/A"+str(size)+"x"+str(size)+".txt")
+    B = createMatrz("tra1/entradas/B"+str(size)+"x"+str(size)+".txt")
+   
+    C = np.zeros((size,size), dtype=np.float64)
 
-    printMatriz(4,a);
-    print("==========")
-    printMatriz(4,B);
+   
     i = 0;
     j =0;
     k = 0;
 
-    for i in range(m):
-        for j in range(n):
+    for i in range(size):
+        for j in range(size):
             soma= 0;
-            for k in range(p):
+            for k in range(size):
                 soma +=  (int(A[i][k]) * int(B[k][j]));
 
             C[i][j] = soma;
             
-            
-
-    print();
     printMatriz(len(C),C);
 
 
 
-multMatriz(4,4,4)
 
+def main ():
+    size,forma = sys.stdin.readline().split()
+    print(size) 
+    size = int(size)
+    print(forma)
+    multMatriz(size)
+    
+
+main()
