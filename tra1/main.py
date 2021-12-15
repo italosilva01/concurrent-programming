@@ -62,7 +62,6 @@ def multMatrizConcorrente(size):
       
     def doTask(row):
         #funcionando
-        rowA = A[row];
         j = 0;
         k= 0;
        
@@ -70,7 +69,7 @@ def multMatrizConcorrente(size):
         for j in range(size):
             soma = 0;
             for k in range(size):
-                soma += int(rowA[k])*int(B[k][j]);
+                soma += int(A[row][k])*int(B[k][j]);
             C[row][j] = soma
         
          
@@ -91,8 +90,8 @@ def main ():
     size = int(size)
     print(forma)
     multMatrizConcorrente(size)
-    print('==================')
-    multMatrizSequencial(size)
+    # print('==================')
+    # multMatrizSequencial(size)
     
 
 main()
