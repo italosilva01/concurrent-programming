@@ -19,6 +19,11 @@ def printMatriz(size,matriz):
      for a in range(size):          #mostra quedrando em linhas
         print(matriz[a])  
 
+def writeResult (size,ResultMatriz):
+    nameFileResult = "C"+str(size)+"x"+str(size)+".txt"
+    
+    with open(nameFileResult,'wb') as f:      
+        np.savetxt(f,ResultMatriz, fmt="%d")
 
 def multMatrizSequencial(size):
     
@@ -28,19 +33,19 @@ def multMatrizSequencial(size):
     C = np.zeros((size,size), dtype=np.float64)
 
    
-    i = 0;
-    j =0;
-    k = 0;
+    i = 0
+    j =0
+    k = 0
 
     for i in range(size):
         for j in range(size):
-            soma= 0;
+            soma= 0
             for k in range(size):
                 soma +=  (int(A[i][k]) * int(B[k][j]));
 
-            C[i][j] = soma;
+            C[i][j] = soma
             
-    printMatriz(len(C),C);
+    writeResult(size,C)
 
 
 
@@ -81,17 +86,24 @@ def multMatrizConcorrente(size):
     for t in threads:
         t.join()
          
-    printMatriz(size,C)           
+    writeResult(size,C)         
     
 
 
 def main ():
     size,forma = sys.stdin.readline().split()
     size = int(size)
-    print(forma)
-    multMatrizConcorrente(size)
-    # print('==================')
-    # multMatrizSequencial(size)
+    print('--------------------\n')
+    
+    if forma =='S':
+        print('Sequencial')
+        print('==================\n')
+        multMatrizSequencial(size)
+    elif forma == 'C':
+        print('Concorrencia')
+        print('==================\n')
+        multMatrizConcorrente(size)
+    
     
 
 main()
