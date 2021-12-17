@@ -1,6 +1,8 @@
 import numpy  as np
 import sys
 from threading import Thread
+import timeit
+import pandas as pd
 
 def createMatrz(file):
     row = 0
@@ -26,7 +28,6 @@ def writeResult (size,ResultMatriz):
         np.savetxt(f,ResultMatriz, fmt="%d")
 
 def multMatrizSequencial(size):
-    
     A = createMatrz("tra1/entradas/A"+str(size)+"x"+str(size)+".txt")
     B = createMatrz("tra1/entradas/B"+str(size)+"x"+str(size)+".txt")
    
@@ -74,7 +75,7 @@ def multMatrizConcorrente(size):
         for j in range(size):
             soma = 0;
             for k in range(size):
-                soma += int(A[row][k])*int(B[k][j]);
+                soma += int(A[row][k])*int(B[k][j])
             C[row][j] = soma
         
          
@@ -93,17 +94,35 @@ def multMatrizConcorrente(size):
 def main ():
     size,forma = sys.stdin.readline().split()
     size = int(size)
+    print(size)
     print('--------------------\n')
     
     if forma =='S':
         print('Sequencial')
         print('==================\n')
-        multMatrizSequencial(size)
+        # multMatrizSequencial(size)
+        # t = timeit.Timer('multMatrizSequencial(size)','from __main__ import multMatrizSequencial,size')
+        t = timeit.Timer(lambda:multMatrizSequencial(size))
+        listTime = t.repeat(20,1)
+        print('Max = '+ str(max(listTime)))
+        print('min = '+ str(min(listTime)))
+        print('Média = '+ str(sum(listTime)/len(listTime)))
+        
+        df = pd.DataFrame(listTime)       
+        df.to_csv(str(size)+"x"+str(size)+"S.csv",index=False)
+
+        
     elif forma == 'C':
         print('Concorrencia')
         print('==================\n')
-        multMatrizConcorrente(size)
-    
-    
+        t = timeit.Timer(lambda:multMatrizConcorrente(size))
+        listTime = t.repeat(20,1)
+        print('Max = '+ str(max(listTime)))
+        print('min = '+ str(min(listTime)))
+        print('Média = '+ str(sum(listTime)/len(listTime)))
+
+        df = pd.DataFrame(listTime)
+       
+        df.to_csv(str(size)+"x"+str(size)+"C.csv",index=False)
 
 main()
