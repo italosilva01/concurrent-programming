@@ -1,8 +1,10 @@
 import numpy  as np
 import sys
+import timeit
+import pandas as pd
 from threading import Thread
 
-NUMBER_THREADS = 8
+NUMBER_THREADS = 32
 
 def createMatrice(file_name):
     matriz=[]
@@ -99,12 +101,23 @@ def main ():
     print('--------------------\n')
     
     if forma =='S':
-        print('Sequencial')
-        print('==================\n')
-        multMatrizSequencial(size)
+        t = timeit.Timer(lambda:multMatrizSequencial(size))
+        listTime = t.repeat(20,1)
+        print( str(max(listTime)))
+        print( str(min(listTime)))
+        print( str(sum(listTime)/len(listTime)))
+
+        df = pd.DataFrame(listTime)
+        df.to_csv(str(size)+"x"+str(size)+"S.csv",index=False)
+        
     elif forma == 'C':
-        print('Concorrencia')
-        print('==================\n')
-        multMatrizConcorrente(size)
+        t = timeit.Timer(lambda:multMatrizConcorrente(size))
+        listTime = t.repeat(20,1)
+        print( str(max(listTime)))
+        print( str(min(listTime)))
+        print( str(sum(listTime)/len(listTime)))
+
+        df = pd.DataFrame(listTime)
+        df.to_csv(str(size)+"x"+str(size)+"C.csv",index=False)
 
 main()
