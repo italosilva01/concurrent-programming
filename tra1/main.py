@@ -2,17 +2,18 @@ import numpy  as np
 import sys
 from threading import Thread
 
-def createMatrz(file):
-    row = 0
-    matriz=[]
-    file = open(file,"r")  
-    size = file.readlines()
+NUMBER_THREADS = 8
 
-    for i in range(len(size)):
-        if(i ==0):
-            row = size[i][0]
-        else:     
-            matriz.append(size[i].split())
+def createMatrice(file_name):
+    matriz=[]
+
+    with open (file_name, "r")  as file:
+        lines = file.readlines()
+
+        # ignor a primeira linha, pois trata-se apenas das dimensões da matriz
+        for i in range(1, len(lines)):
+            matriz.append(lines[i].split())
+
     return matriz
 
 def printMatriz(size,matriz):
@@ -20,39 +21,36 @@ def printMatriz(size,matriz):
         print(matriz[a])  
 
 def writeResult (size,ResultMatriz):
-    nameFileResult = "C"+str(size)+"x"+str(size)+".txt"
-    
+    nameFileResult = f'C{size}x{size}.txt'
+
     with open(nameFileResult,'wb') as f:      
         np.savetxt(f,ResultMatriz, fmt="%d")
 
 def multMatrizSequencial(size):
-    
-    A = createMatrz("tra1/entradas/A"+str(size)+"x"+str(size)+".txt")
-    B = createMatrz("tra1/entradas/B"+str(size)+"x"+str(size)+".txt")
-   
+    A = createMatrice(f'tra1/entradas/A{size}x{size}.txt')
+    B = createMatrice(f'tra1/entradas/B{size}x{size}.txt')
+
     C = np.zeros((size,size), dtype=np.float64)
 
-   
     i = 0
     j =0
     k = 0
 
     for i in range(size):
         for j in range(size):
-            soma= 0
+            soma = 0
             for k in range(size):
-                soma +=  (int(A[i][k]) * int(B[k][j]));
+                soma +=  (int(A[i][k]) * int(B[k][j]))
 
             C[i][j] = soma
-            
-    writeResult(size,C)
 
+    writeResult(size,C)
 
 
 def multMatrizConcorrente(size):
 
-    A = createMatrz("tra1/entradas/A"+str(size)+"x"+str(size)+".txt")
-    B = createMatrz("tra1/entradas/B"+str(size)+"x"+str(size)+".txt")   
+    A = createMatrice("tra1/entradas/A"+str(size)+"x"+str(size)+".txt")
+    B = createMatrice("tra1/entradas/B"+str(size)+"x"+str(size)+".txt")   
     C = np.zeros((size,size), dtype=np.float64)
     threads = []
     id = 0
@@ -67,27 +65,32 @@ def multMatrizConcorrente(size):
       
     def doTask(row):
         #funcionando
-        j = 0;
-        k= 0;
-       
-        
+        j = 0
+        k= 0
+
         for j in range(size):
-            soma = 0;
+            soma = 0
             for k in range(size):
-                soma += int(A[row][k])*int(B[k][j]);
+                soma += int(A[row][k])*int(B[k][j])
             C[row][j] = soma
-        
-         
-    for id in range(size):
-        t = Thread(target=doTask,args=(id,))
-        threads.append(t)
-        t.start()
-        
-    for t in threads:
-        t.join()
-         
+
+    cont = 0
+    while True:
+        for i in range(NUMBER_THREADS):
+            try:
+                if not threads[i].is_alive():
+                    threads.pop(i)
+            except IndexError:
+                if cont < size:
+                    t = Thread(target=doTask,args=(cont,))
+                    threads.append(t)
+                    t.start()
+                    cont += 1
+
+        if not threads and cont >= size:
+            break
+
     writeResult(size,C)         
-    
 
 
 def main ():
@@ -103,7 +106,5 @@ def main ():
         print('Concorrencia')
         print('==================\n')
         multMatrizConcorrente(size)
-    
-    
 
 main()
