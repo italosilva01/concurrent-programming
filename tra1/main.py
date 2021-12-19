@@ -94,32 +94,27 @@ def multMatrizConcorrente(size):
 def main ():
     size,forma = sys.stdin.readline().split()
     size = int(size)
-    print(size)
     print('--------------------\n')
     
     if forma =='S':
-        print('Sequencial')
-        print('==================\n')
-        # multMatrizSequencial(size)
-        # t = timeit.Timer('multMatrizSequencial(size)','from __main__ import multMatrizSequencial,size')
+       
         t = timeit.Timer(lambda:multMatrizSequencial(size))
         listTime = t.repeat(20,1)
-        print('Max = '+ str(max(listTime)))
-        print('min = '+ str(min(listTime)))
-        print('Média = '+ str(sum(listTime)/len(listTime)))
+        print( str(max(listTime)))
+        print( str(min(listTime)))
+        print( str(sum(listTime)/len(listTime)))
         
         df = pd.DataFrame(listTime)       
         df.to_csv(str(size)+"x"+str(size)+"S.csv",index=False)
 
         
     elif forma == 'C':
-        print('Concorrencia')
-        print('==================\n')
+       
         t = timeit.Timer(lambda:multMatrizConcorrente(size))
         listTime = t.repeat(20,1)
-        print('Max = '+ str(max(listTime)))
-        print('min = '+ str(min(listTime)))
-        print('Média = '+ str(sum(listTime)/len(listTime)))
+        print( str(max(listTime)))
+        print( str(min(listTime)))
+        print( str(sum(listTime)/len(listTime)))
 
         df = pd.DataFrame(listTime)
        
