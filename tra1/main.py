@@ -90,8 +90,9 @@ def multMatrizConcorrente(size):
 
 
 def main():
-    size,forma = sys.stdin.readline().split()
-    size = int(size)
+    size = int(sys.argv[1])
+    forma = sys.argv[2]
+
     print('--------------------\n')
     
     if forma =='S':
