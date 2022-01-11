@@ -1,6 +1,7 @@
-from threading import Thread
+from threading import Thread,Lock
 from time import sleep
 
+lock = Lock();
 
 class Node():
     def __init__(self, value = None, next = None, previous = None):
@@ -23,6 +24,7 @@ class CommonThread(Thread):
 
 class ReadThread(CommonThread):
     def run(self):
+        print("Buscar")
         ll = self.linked_list.head
         cont = 0
 
@@ -33,11 +35,15 @@ class ReadThread(CommonThread):
             ll = ll.next
 
         if ll != None:
-            print(f'Valor ({ll.value}) encontrado no nó {cont}!')    
+            print(f'Valor ({ll.value}) encontrado no nó {cont}!')   
+        print("Bu")
+
 
 
 class InsertThread(CommonThread):
     def run(self):
+        lock.acquire()
+        print('inserindo')
         ll = self.linked_list.head
 
         while ll.next != None:
@@ -49,12 +55,16 @@ class InsertThread(CommonThread):
         else:
             temp = Node(value = self.value, previous=ll)
             ll.next = temp
+        print("UI")
+        lock.release()
 
 
 class RemoveThread(CommonThread):
     def run(self):
+        lock.acquire()
+        print('Removendo')
+       
         ll = self.linked_list.head
-
         while ll != None:
             if ll.value == self.value:
                 break
@@ -73,7 +83,8 @@ class RemoveThread(CommonThread):
                 self.linked_list.head = ll.next
             else:
                 self.linked_list.head = Node()
-
+        print('AI')
+        lock.release()
 
 if __name__ == '__main__':
     linked_list = LinkedList(Node())
@@ -81,18 +92,27 @@ if __name__ == '__main__':
     for i in range(0, 10):
         t = InsertThread(linked_list, i)
         t.start()
-    
+    print()
+    print()
+    print()
+    print()
     t1 = InsertThread(linked_list, 10)
-    t2 = RemoveThread(linked_list, 1)
+    t2 = RemoveThread(linked_list, 10)
     t3 = ReadThread(linked_list, 0)
+    t4 = RemoveThread(linked_list,1)
 
+  
+   
+    t3.start()
+    
     t1.start()
     t2.start()
-    t3.start()
-
+    t4.start()
+    
     t1.join()
     t2.join()
     t3.join()
+    t4.join()
 
     ll = linked_list.head
 
