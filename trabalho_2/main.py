@@ -110,6 +110,7 @@ class RemoveThread(CommonThread):
                 removeItem(self)
             else:
                 print("waiting timeout...")
+            cond.notify()
             cond.release()
         
 
@@ -125,7 +126,7 @@ if __name__ == '__main__':
     
     t1 = InsertThread(linked_list, 10)
     t3 = ReadThread(linked_list, 0) 
-    t4 = ReadThread(linked_list, 0)
+    t4 = ReadThread(linked_list, 1)
     t5 = ReadThread(linked_list, 7)
     t2 = RemoveThread(linked_list, 1)
     t6 = RemoveThread(linked_list, 7)
@@ -142,6 +143,8 @@ if __name__ == '__main__':
     t2.join()
     t3.join()
     t4.join()
+    t5.join() 
+    t6.join()
 
     ll = linked_list.head
 
