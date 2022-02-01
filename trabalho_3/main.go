@@ -19,7 +19,7 @@ func runners(position  int){
 	time.Sleep(5*time.Second) 
 	
 	if position !=4 {
-		fmt.Println("Corredor n°",position, "grita para o proximo corredor")
+		fmt.Println("Corredor n°",position, "grita para o proximo corredor 🗣")
 		
 		time.Sleep(1*time.Second) 
 		
